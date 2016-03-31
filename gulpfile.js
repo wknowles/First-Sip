@@ -2,6 +2,7 @@
 var gulp = require('gulp'),
     browserSync = require('browser-sync').create(),
     sass = require('gulp-sass'),
+    autoprefixer = require('gulp-autoprefixer'),
     useref = require('gulp-useref'),
     uglify = require('gulp-uglify'),
     gulpIf = require('gulp-if'),
@@ -36,6 +37,7 @@ gulp.task('nunjucks', function() {
 gulp.task('sass', function(){
   return gulp.src('app/scss/**/*.scss') // Gets all files ending with .scss in app/scss
     .pipe(sass()) // Converts Sass to CSS with gulp-sass
+    .pipe(autoprefixer('last 2 version'))
     .pipe(gulp.dest('app/_temp/css')) // Sets temporary dest of css (for dev - min in dist)
     .pipe(browserSync.reload({ // Tells browserSync to reload when sass changes
       stream: true
