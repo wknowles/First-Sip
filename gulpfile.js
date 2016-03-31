@@ -10,19 +10,20 @@ var gulp = require('gulp'),
     cache = require('gulp-cache'),
     del = require('del'),
     runSequence = require('run-sequence'),
-    nunjucksRender = require('gulp-nunjucks-render'),
-    input  = {
-      'sass': 'src/scss/**/*.scss',
-      'javascript': 'src/javascript/**/*.js'
-    },
-    output = {
-      'stylesheets': 'dist/css',
-      'javascript': 'dist/js'
-    };
+    nunjucksRender = require('gulp-nunjucks-render');
 
-// gulp task to combine partial html files
+// gulp task to run browserSync
+gulp.task('browserSync', function() {
+  browserSync.init({
+    server: {
+      baseDir: 'app'
+    },
+  });
+});
+
+// gulp task to combine partial html files using nunjucks templates
 gulp.task('nunjucks', function() {
-  nunjucksRender.nunjucks.configure(['app/templates/']);
+  nunjucksRender.nunjucks.configure(['app/templates']);
   // Gets .html and .nunjucks files in pages
   return gulp.src('app/pages/**/*.+(html|njk|nunjucks)')
   // Renders template with nunjucks
@@ -33,21 +34,12 @@ gulp.task('nunjucks', function() {
 
 // gulp task to process sass into css
 gulp.task('sass', function(){
-  return gulp.src(input.sass) // Gets all files ending with .scss in app/scss
+  return gulp.src('app/scss/**/*.scss') // Gets all files ending with .scss in app/scss
     .pipe(sass()) // Converts Sass to CSS with gulp-sass
-    .pipe(gulp.dest('src/css')) //Sets destination of processed sass
+    .pipe(gulp.dest('app/_temp/css')) // Sets temporary dest of css (for dev - min in dist)
     .pipe(browserSync.reload({ // Tells browserSync to reload when sass changes
       stream: true
     }));
-});
-
-// gulp task to run browserSync
-gulp.task('browserSync', function() {
-  browserSync.init({
-    server: {
-      baseDir: 'app'
-    },
-  });
 });
 
 // gulp task to watch for changes and then run tasks above
@@ -59,7 +51,23 @@ gulp.task('watch', ['browserSync', 'nunjucks', 'sass'], function (){
   gulp.watch('app/js/**/*.js', browserSync.reload);
 });
 
-// gulp task to combine, minify and concat css & js
+// default task for development - just run `gulp`
+gulp.task('default', function (callback) {
+  runSequence(['nunjucks', 'sass', 'browserSync', 'watch'],
+    callback
+  );
+});
+
+//                                                            //
+//  the tasks below are used when building for distribution   //
+//                                                            //
+
+// clean up dist folder
+gulp.task('clean:dist', function() {
+  return del.sync('dist');
+});
+
+// gulp task to combine, minify and concatenate css & js
 gulp.task('useref', function(){
   return gulp.src('app/*.html')
     .pipe(useref())
@@ -79,21 +87,10 @@ gulp.task('images', function(){
   .pipe(gulp.dest('dist/images'));
 });
 
-// clean up dist folder
-gulp.task('clean:dist', function() {
-  return del.sync('dist');
-});
-
 // gulp build to put everything together
 gulp.task('build', function (callback) {
   runSequence('clean:dist',
     ['nunjucks', 'sass', 'useref', 'images'],
-    callback
-  );
-});
-
-gulp.task('default', function (callback) {
-  runSequence(['nunjucks', 'sass', 'browserSync', 'watch'],
     callback
   );
 });
