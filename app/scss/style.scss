@@ -1,3 +1,32 @@
+$linkColor: #4ea3d7 !default;
+$hoverColor: #0B348B !default;
+
+// Background colors.
+$backgroundColor: #FCFCFC !default;
+
+
 body {
   text-align: center;
+  font-family: "Helvetica Neue", sans-serif;
 }
+
+// Nice underlines for text links.
+a {
+    color: $linkColor;
+    text-decoration: none;
+    transition: color .8s, background-color .8s;
+    background-image: linear-gradient(to bottom,rgba(0, 0, 0, 0) 50%,lighten($linkColor,20%) 50%);
+    background-position: 0 93%;
+    background-repeat: repeat-x;
+    background-size: 100% 0.15rem;
+    text-shadow: 0.1rem 0 $backgroundColor,
+                 0.15rem 0 $backgroundColor,
+                -0.1rem 0 $backgroundColor,
+                -0.15rem 0 $backgroundColor;
+
+    &:hover, &:active, &:focus {
+      color: $hoverColor;
+      text-decoration: none;
+      background-image: linear-gradient(to bottom,rgba(0, 0, 0, 0) 50%,lighten($hoverColor,20%) 50%);
+    }
+  }

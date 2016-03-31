@@ -1,2 +1,17 @@
 body {
-  text-align: center; }
+  text-align: center;
+  font-family: "Helvetica Neue", sans-serif; }
+
+a {
+  color: #4ea3d7;
+  text-decoration: none;
+  transition: color .8s, background-color .8s;
+  background-image: linear-gradient(to bottom, transparent 50%, #a1ceea 50%);
+  background-position: 0 93%;
+  background-repeat: repeat-x;
+  background-size: 100% 0.15rem;
+  text-shadow: 0.1rem 0 #FCFCFC, 0.15rem 0 #FCFCFC, -0.1rem 0 #FCFCFC, -0.15rem 0 #FCFCFC; }
+  a:hover, a:active, a:focus {
+    color: #0B348B;
+    text-decoration: none;
+    background-image: linear-gradient(to bottom, transparent 50%, #1257ea 50%); }
