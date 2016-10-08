@@ -14,8 +14,7 @@ var gulp = require('gulp'),
     imagemin = require('gulp-imagemin'),
     cache = require('gulp-cache'),
     del = require('del'),
-    runSequence = require('run-sequence'),
-    nunjucksRender = require('gulp-nunjucks-render');
+    runSequence = require('run-sequence');
 
 // gulp task to run browserSync
 gulp.task('browserSync', function() {
@@ -24,17 +23,6 @@ gulp.task('browserSync', function() {
       baseDir: 'app'
     },
   });
-});
-
-// gulp task to combine partial html files using nunjucks templates
-gulp.task('nunjucks', function() {
-  nunjucksRender.nunjucks.configure(['app/templates']);
-  // Gets .html and .nunjucks files in pages
-  return gulp.src('app/pages/**/*.+(html|njk|nunjucks)')
-  // Renders template with nunjucks
-  .pipe(nunjucksRender())
-  // output files in app folder
-  .pipe(gulp.dest('app'));
 });
 
 // gulp task to process sass into css
@@ -49,17 +37,15 @@ gulp.task('sass', function(){
 });
 
 // gulp task to watch for changes and then run tasks above
-gulp.task('watch', ['browserSync', 'nunjucks', 'sass'], function (){
+gulp.task('watch', ['browserSync', 'sass'], function (){
   gulp.watch('app/scss/**/*.scss', ['sass']);
-  gulp.watch('app/pages/**/*.+(html|njk|nunjucks)', ['nunjucks']);
-  gulp.watch('app/templates/**/*.+(html|njk|nunjucks)', ['nunjucks']);
   gulp.watch('app/*.html', browserSync.reload);
   gulp.watch('app/js/**/*.js', browserSync.reload);
 });
 
 // default task for development - just run `gulp`
 gulp.task('default', function (callback) {
-  runSequence(['nunjucks', 'sass', 'browserSync', 'watch'],
+  runSequence(['sass', 'browserSync', 'watch'],
     callback
   );
 });
@@ -96,7 +82,7 @@ gulp.task('images', function(){
 // gulp build to put everything together
 gulp.task('build', function (callback) {
   runSequence('clean:dist',
-    ['nunjucks', 'sass', 'useref', 'images'],
+    ['sass', 'useref', 'images'],
     callback
   );
 });
